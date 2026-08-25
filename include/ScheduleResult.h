@@ -1,0 +1,25 @@
+#ifndef SCHEDULE_RESULT_H
+#define SCHEDULE_RESULT_H
+
+#include <vector>
+
+struct ExecutionBlock {
+    int processId;
+    int startTime;
+    int endTime;
+};
+
+struct ProcessMetrics {
+    int processId;
+    int completionTime;
+    int turnaroundTime;
+    int waitingTime;
+    int responseTime;
+};
+
+struct ScheduleResult {
+    vector<ExecutionBlock> timeline;
+    vector<ProcessMetrics> metrics;
+};
+
+#endif
