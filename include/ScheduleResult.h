@@ -2,6 +2,7 @@
 #define SCHEDULE_RESULT_H
 
 #include <vector>
+#include <string>
 
 struct ExecutionBlock {
     int processId;
@@ -18,6 +19,8 @@ struct ProcessMetrics {
 };
 
 struct ScheduleResult {
+    string algorithmName;
+
     vector<ExecutionBlock> timeline;
     vector<ProcessMetrics> metrics;
 

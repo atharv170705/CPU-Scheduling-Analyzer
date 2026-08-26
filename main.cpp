@@ -4,6 +4,7 @@
 #include "FCFS.h"
 #include "RoundRobin.h"
 #include "SRT.h"
+#include "SimulationRunner.h"
 
 using namespace std;
 
@@ -79,16 +80,30 @@ int main() {
     schedulers.push_back(make_unique<RoundRobin>(2));
     schedulers.push_back(make_unique<SRT>());
 
-    for (auto& scheduler : schedulers) {
+    vector<ScheduleResult> sequentialResult = SimulationRunner::runSequential(processes, schedulers);
+
+    vector<ScheduleResult> concurrentResults = SimulationRunner::runConcurrent(processes, schedulers);
+
+    for(const auto& result : sequentialResult) {
 
         cout << "\n====================\n";
         cout << "Algorithm: "
-             << scheduler->getName()
-             << '\n';
+            << result.algorithmName
+            << '\n';
         cout << "====================\n";
 
-        ScheduleResult result =
-            scheduler->simulate(processes);
+        printResult(result);
+    }
+
+    cout << "\n\n===== CONCURRENT RESULTS =====\n";
+
+    for(const auto& result : concurrentResults) {
+
+        cout << "\n====================\n";
+        cout << "Algorithm: "
+            << result.algorithmName
+            << '\n';
+        cout << "====================\n";
 
         printResult(result);
     }

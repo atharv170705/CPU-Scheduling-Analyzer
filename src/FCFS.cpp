@@ -13,6 +13,8 @@ ScheduleResult FCFS::simulate(const vector<Process>& processes) {
         return result;
     }
 
+    result.algorithmName = getName();
+
     vector<Process> sortedProcesses = processes;
 
     sort(sortedProcesses.begin(), sortedProcesses.end(), 

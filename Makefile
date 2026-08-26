@@ -9,7 +9,8 @@ SOURCES = main.cpp \
           src/RoundRobin.cpp \
           src/SRT.cpp \
           src/Timeline.cpp \
-          src/MetricsEngine.cpp
+          src/MetricsEngine.cpp \
+          src/SimulationRunner.cpp
 
 $(TARGET): $(SOURCES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET)

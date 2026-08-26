@@ -14,6 +14,8 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
         return result;
     }
 
+    result.algorithmName = getName();
+
     vector<Process> localProcesses = processes;
     int n = localProcesses.size();
 
