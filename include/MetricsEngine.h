@@ -14,6 +14,12 @@ public:
         const vector<Process>& processes,
         ScheduleResult& result
     );
+
+private:
+    static void calculateSummary(
+        const vector<Process>& processes,
+        ScheduleResult& result
+    );    
 };
 
 #endif

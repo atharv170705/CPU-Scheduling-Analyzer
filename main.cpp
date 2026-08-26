@@ -43,20 +43,35 @@ void printResult(const ScheduleResult& result) {
              << " | RT: " << metric.responseTime
              << '\n';
     }
+
+    cout << fixed << setprecision(2);
+
+    cout << "\nPerformance Summary:\n";
+
+    cout << "Average Waiting Time    : "
+        << result.averageWaitingTime << '\n';
+
+    cout << "Average Turnaround Time : "
+        << result.averageTurnaroundTime << '\n';
+
+    cout << "Average Response Time   : "
+        << result.averageResponseTime << '\n';
+
+    cout << "CPU Utilization         : "
+        << result.cpuUtilization << "%\n";
+
+    cout << "Throughput              : "
+        << result.throughput
+        << " processes/unit time\n";
 }
 
 int main() {
 
     vector<Process> processes = {
-        Process(1, 2, 5),
-        Process(2, 4, 3),
-        Process(3, 5, 2)
+        Process(1, 0, 5),
+        Process(2, 10, 3),
+        Process(3, 12, 2)
     };
-    // vector<Process> processes = {
-    //     Process(1, 0, 8),
-    //     Process(2, 1, 4),
-    //     Process(3, 2, 2)
-    // };
 
     vector<unique_ptr<Scheduler>> schedulers;
 

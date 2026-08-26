@@ -51,4 +51,55 @@ void MetricsEngine::calculateMetrics(
             rt
         });
     } 
+
+    calculateSummary(processes, result);
+}
+
+void MetricsEngine::calculateSummary(
+    const vector<Process>& processes,
+    ScheduleResult& result
+) {
+    if(processes.empty()) {
+        return;
+    }
+
+    double totalWaitingTime = 0.0;
+    double totalTurnaroundTime = 0.0;
+    double totalResponseTime = 0.0;
+
+    for(const auto &metric : result.metrics) {
+        totalWaitingTime += metric.waitingTime;
+        totalTurnaroundTime += metric.turnaroundTime;
+        totalResponseTime += metric.responseTime;
+    }
+
+    int n = processes.size();
+
+    result.averageWaitingTime = totalWaitingTime / n;
+    result.averageTurnaroundTime = totalTurnaroundTime / n;
+    result.averageResponseTime = totalResponseTime / n;
+
+    int totalBurstTime = 0;
+
+    for(const Process& process : processes) {
+        totalBurstTime += process.getBurstTime();
+    }
+
+    int firstArrival = INT_MAX;
+    int lastCompletion = 0;
+
+    for(const Process& process : processes) {
+        firstArrival = min(firstArrival, process.getArrivalTime());
+    }
+
+    for(const auto& metric : result.metrics) {
+        lastCompletion = max(lastCompletion, metric.completionTime);
+    }
+
+    int totalElapsedTime = lastCompletion - firstArrival;
+
+    if(totalElapsedTime > 0) {
+        result.cpuUtilization = (double)totalBurstTime / totalElapsedTime * 100.0;
+        result.throughput = (double)n / totalElapsedTime;
+    }
 }
