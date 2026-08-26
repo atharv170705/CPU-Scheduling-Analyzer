@@ -3,6 +3,7 @@
 #include "Scheduler.h"
 #include "FCFS.h"
 #include "RoundRobin.h"
+#include "SRT.h"
 
 using namespace std;
 
@@ -46,9 +47,14 @@ void printResult(const ScheduleResult& result) {
 
 int main() {
 
+    // vector<Process> processes = {
+    //     Process(1, 0, 5),
+    //     Process(2, 1, 3),
+    //     Process(3, 2, 2)
+    // };
     vector<Process> processes = {
-        Process(1, 0, 5),
-        Process(2, 1, 3),
+        Process(1, 0, 8),
+        Process(2, 1, 4),
         Process(3, 2, 2)
     };
 
@@ -56,6 +62,7 @@ int main() {
 
     schedulers.push_back(make_unique<FCFS>());
     schedulers.push_back(make_unique<RoundRobin>(2));
+    schedulers.push_back(make_unique<SRT>());
 
     for (auto& scheduler : schedulers) {
 

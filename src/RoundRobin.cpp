@@ -89,7 +89,7 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
 
             int completionTime = currentTime;
             int turnaroundTime = completionTime - process.getArrivalTime();
-            int waitingTime = turnaroundTime - process.getArrivalTime();
+            int waitingTime = turnaroundTime - process.getBurstTime();
 
             int responseTime = responseTimes[index];
 
