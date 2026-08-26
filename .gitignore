@@ -1,5 +1,6 @@
 # Compiled executable
 scheduler
+benchmark
 
 # Object files (generated during compilation)
 *.o
@@ -9,3 +10,5 @@ scheduler
 
 # macOS system files
 .DS_Store
+
+benchmark_logs.txt

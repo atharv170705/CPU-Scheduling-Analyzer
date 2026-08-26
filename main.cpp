@@ -74,6 +74,8 @@ int main() {
         Process(3, 12, 2)
     };
 
+    // we use unique_ptr because: No manual delete
+    // if we do Scheduler* scheduler = new FCFS(); then we'll have to manually delete
     vector<unique_ptr<Scheduler>> schedulers;
 
     schedulers.push_back(make_unique<FCFS>());
