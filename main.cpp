@@ -47,16 +47,16 @@ void printResult(const ScheduleResult& result) {
 
 int main() {
 
+    vector<Process> processes = {
+        Process(1, 2, 5),
+        Process(2, 4, 3),
+        Process(3, 5, 2)
+    };
     // vector<Process> processes = {
-    //     Process(1, 0, 5),
-    //     Process(2, 1, 3),
+    //     Process(1, 0, 8),
+    //     Process(2, 1, 4),
     //     Process(3, 2, 2)
     // };
-    vector<Process> processes = {
-        Process(1, 0, 8),
-        Process(2, 1, 4),
-        Process(3, 2, 2)
-    };
 
     vector<unique_ptr<Scheduler>> schedulers;
 

@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include "SRT.h"
+#include "Timeline.h"
+#include "MetricsEngine.h"
 
 using namespace std;
 
@@ -15,8 +17,6 @@ ScheduleResult SRT::simulate(const vector<Process>& processes) {
     int n = localProcesses.size();
     int completed = 0;
     int currentTime = 0;
-
-    vector<int> responseTimes(n, -1);
 
     while(completed < n) {
         int selected = -1;
@@ -43,58 +43,37 @@ ScheduleResult SRT::simulate(const vector<Process>& processes) {
                 }
             }
 
-            result.timeline.push_back({
+            addExecutionBlock(
+                result.timeline,
                 -1,
                 currentTime,
                 nextArrival
-            });
-
+            );
+    
             currentTime = nextArrival;
             continue;
         }
 
         Process& process = localProcesses[selected];
 
-        // Record response time when the process first gets CPU.
-        if(responseTimes[selected] == -1) {
-            responseTimes[selected] = currentTime - process.getArrivalTime();
-        }
-
         int startTime = currentTime;
         //execute for exactly one unit of time
         process.setRemainingTime(process.getRemainingTime() - 1);
         currentTime++;
-
-        // If the previous timeline block belongs to the same process,
-        // extend it instead of creating a new one-unit block.
-        if(!result.timeline.empty() && result.timeline.back().processId == process.getId() && result.timeline.back().endTime == startTime) {
-            result.timeline.back().endTime = currentTime;
-        }
-        else {
-            result.timeline.push_back({
-                process.getId(),
-                startTime,
-                currentTime
-            });
-        }
+        
+        addExecutionBlock(
+            result.timeline,
+            process.getId(),
+            startTime,
+            currentTime
+        );
 
         if(process.getRemainingTime() == 0) {
             completed++;
-
-            int completionTime = currentTime;
-            int turnaroundTime = completionTime - process.getArrivalTime();
-            int waitingTime = turnaroundTime - process.getBurstTime();
-            int responseTime = responseTimes[selected];
-
-            result.metrics.push_back({
-                process.getId(),
-                completionTime,
-                turnaroundTime,
-                waitingTime,
-                responseTime
-            });
         }
     }
+
+    MetricsEngine::calculateMetrics(processes, result);
 
     return result;
 }

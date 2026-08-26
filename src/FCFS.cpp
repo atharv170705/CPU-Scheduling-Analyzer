@@ -1,5 +1,9 @@
 #include <bits/stdc++.h>
 #include "FCFS.h"
+#include "Timeline.h"
+#include "MetricsEngine.h"
+
+using namespace std;
 
 ScheduleResult FCFS::simulate(const vector<Process>& processes) {
 
@@ -25,11 +29,12 @@ ScheduleResult FCFS::simulate(const vector<Process>& processes) {
     for(const Process& process : sortedProcesses) {
         // CPU is idle until this process arrives.
         if(currentTime < process.getArrivalTime()) {
-            result.timeline.push_back({
+            addExecutionBlock(
+                result.timeline,
                 -1,
                 currentTime,
                 process.getArrivalTime()
-            });
+            );
 
             currentTime = process.getArrivalTime();
         }
@@ -37,27 +42,17 @@ ScheduleResult FCFS::simulate(const vector<Process>& processes) {
         int startTime = currentTime;
         int completionTime = startTime + process.getBurstTime();
 
-        result.timeline.push_back({
+        addExecutionBlock(
+            result.timeline,
             process.getId(),
             startTime,
             completionTime
-        });
-
-        //metrics
-        int turnaroundTime = completionTime - process.getArrivalTime();
-        int waitingTime = turnaroundTime - process.getBurstTime();
-        int responseTime = startTime - process.getArrivalTime();
-
-        result.metrics.push_back({
-            process.getId(),
-            completionTime,
-            turnaroundTime,
-            waitingTime,
-            responseTime
-        });
+        );
 
         currentTime = completionTime;
     }
+
+    MetricsEngine::calculateMetrics(processes, result);
 
     return result;
 }

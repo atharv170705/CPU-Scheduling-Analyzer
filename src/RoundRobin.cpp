@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include "RoundRobin.h"
+#include "Timeline.h"
+#include "MetricsEngine.h"
 
 using namespace std;
 
@@ -13,10 +15,7 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
     }
 
     vector<Process> localProcesses = processes;
-    int processesSize = (int)localProcesses.size();
-
-    // first time process got CPU - arrival time
-    vector<int> responseTimes(processesSize, -1);
+    int n = localProcesses.size();
 
     sort(localProcesses.begin(), localProcesses.end(),
         [](const Process& a, const Process& b) {
@@ -33,22 +32,25 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
     int nextProcess = 0;
     int completed = 0;
 
-    while(completed < processesSize) {
+    while(completed < n) {
         // Add every process that has arrived.
-        while(nextProcess < processesSize && localProcesses[nextProcess].getArrivalTime() <= currentTime) {
+        while(nextProcess < n && localProcesses[nextProcess].getArrivalTime() <= currentTime) {
             readyQueue.push(nextProcess);
             nextProcess++;
         }
 
         // CPU is idle if no process is ready.
         if(readyQueue.empty()) {
-            if(nextProcess < processesSize) {
+            if(nextProcess < n) {
                 int nextArrival = localProcesses[nextProcess].getArrivalTime();
-                result.timeline.push_back({
+                addExecutionBlock(
+                    result.timeline,
                     -1,
                     currentTime,
                     nextArrival
-                });
+                );
+
+                currentTime = nextArrival;
             }
             continue;
         }
@@ -61,22 +63,19 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
         int startTime = currentTime;
         int executionTime = min(quantum, process.getRemainingTime());
 
-        if(responseTimes[index] == -1) {
-            responseTimes[index] = startTime - process.getArrivalTime();
-        }
-
         currentTime += executionTime;
 
         process.setRemainingTime(process.getRemainingTime() - executionTime);
 
-        result.timeline.push_back({
+       addExecutionBlock(
+            result.timeline,
             process.getId(),
             startTime,
             currentTime
-        });
+       );
 
         // Add processes that arrived during this time slice.
-        while(nextProcess < processesSize && localProcesses[nextProcess].getArrivalTime() <= currentTime) {
+        while(nextProcess < n && localProcesses[nextProcess].getArrivalTime() <= currentTime) {
             readyQueue.push(nextProcess);
             nextProcess++;
         }
@@ -86,22 +85,10 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
         }
         else {
             completed++;
-
-            int completionTime = currentTime;
-            int turnaroundTime = completionTime - process.getArrivalTime();
-            int waitingTime = turnaroundTime - process.getBurstTime();
-
-            int responseTime = responseTimes[index];
-
-            result.metrics.push_back({
-                process.getId(),
-                completionTime,
-                turnaroundTime,
-                waitingTime,
-                responseTime
-            });
         }
     }
+
+    MetricsEngine::calculateMetrics(processes, result);
 
     return result;
 }    
