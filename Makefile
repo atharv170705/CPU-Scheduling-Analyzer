@@ -10,6 +10,7 @@ SOURCES = main.cpp \
           src/SRT.cpp \
           src/SPN.cpp \
           src/HRRN.cpp \
+          src/MLFQ.cpp \
           src/Timeline.cpp \
           src/MetricsEngine.cpp \
           src/SimulationRunner.cpp

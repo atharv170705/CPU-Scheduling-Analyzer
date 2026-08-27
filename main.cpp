@@ -6,6 +6,7 @@
 #include "SRT.h"
 #include "SPN.h"
 #include "HRRN.h"
+#include "MLFQ.h"
 #include "SimulationRunner.h"
 
 using namespace std;
@@ -85,10 +86,11 @@ int main() {
     schedulers.push_back(make_unique<SRT>());
     schedulers.push_back(make_unique<SPN>());
     schedulers.push_back(make_unique<HRRN>());
+    schedulers.push_back(make_unique<MLFQ>());
 
     vector<ScheduleResult> sequentialResult = SimulationRunner::runSequential(processes, schedulers);
 
-    vector<ScheduleResult> concurrentResults = SimulationRunner::runConcurrent(processes, schedulers);
+    // vector<ScheduleResult> concurrentResults = SimulationRunner::runConcurrent(processes, schedulers);
 
     for(const auto& result : sequentialResult) {
 
@@ -101,18 +103,18 @@ int main() {
         printResult(result);
     }
 
-    cout << "\n\n===== CONCURRENT RESULTS =====\n";
+    // cout << "\n\n===== CONCURRENT RESULTS =====\n";
 
-    for(const auto& result : concurrentResults) {
+    // for(const auto& result : concurrentResults) {
 
-        cout << "\n====================\n";
-        cout << "Algorithm: "
-            << result.algorithmName
-            << '\n';
-        cout << "====================\n";
+    //     cout << "\n====================\n";
+    //     cout << "Algorithm: "
+    //         << result.algorithmName
+    //         << '\n';
+    //     cout << "====================\n";
 
-        printResult(result);
-    }
+    //     printResult(result);
+    // }
 
     return 0;
 }
