@@ -3,8 +3,11 @@
 #include "Process.h"
 #include "Scheduler.h"
 #include "FCFS.h"
-#include "RoundRobin.h"
+#include "RR.h"
 #include "SRT.h"
+#include "SPN.h"
+#include "HRRN.h"
+#include "MLFQ.h"
 #include "SimulationRunner.h"
 
 using namespace std;
@@ -38,12 +41,42 @@ vector<unique_ptr<Scheduler>> createSchedulers(int jobCount) {
     vector<unique_ptr<Scheduler>> schedulers;
 
     for(int i = 0; i < jobCount; i++) {
+        int schedulerType = i % 6;
+
+        if(schedulerType == 0) {
+            schedulers.push_back(make_unique<FCFS>());
+        }
+        else if(schedulerType == 1) {
+            int quantum = 2 + (i % 5);
+            schedulers.push_back(make_unique<RR>(quantum));
+        }
+        else if(schedulerType == 2) {
+            schedulers.push_back(make_unique<SRT>());
+        }
+        else if(schedulerType == 3) {
+            schedulers.push_back(make_unique<SPN>());
+        }
+        else if(schedulerType == 4) {
+            schedulers.push_back(make_unique<HRRN>());
+        }
+        else {
+            schedulers.push_back(make_unique<MLFQ>());
+        }
+    }
+
+    return schedulers;
+}
+
+vector<unique_ptr<Scheduler>> createSchedulers1(int jobCount) {
+    vector<unique_ptr<Scheduler>> schedulers;
+
+    for(int i = 0; i < jobCount; i++) {
         if(i % 3 == 0) {
             schedulers.push_back(make_unique<FCFS>());
         }
         else if(i % 3 == 1) {
             int quantum = 2 + (i % 5);
-            schedulers.push_back(make_unique<RoundRobin>(quantum));
+            schedulers.push_back(make_unique<RR>(quantum));
         }
         else {
             schedulers.push_back(make_unique<SRT>());
@@ -54,7 +87,8 @@ vector<unique_ptr<Scheduler>> createSchedulers(int jobCount) {
 }
 
 double measureSequential(const vector<Process>& processes, int jobCount) {
-    auto schedulers = createSchedulers(jobCount);
+    // auto schedulers = createSchedulers(jobCount);
+    auto schedulers = createSchedulers1(jobCount);
 
     auto start = high_resolution_clock::now();
     auto results = SimulationRunner::runSequential(processes, schedulers);
@@ -64,7 +98,8 @@ double measureSequential(const vector<Process>& processes, int jobCount) {
 }
 
 double measureConcurrent(const vector<Process>& processes, int jobCount) {
-    auto schedulers = createSchedulers(jobCount);
+    // auto schedulers = createSchedulers(jobCount);
+    auto schedulers = createSchedulers1(jobCount);
 
     auto start = high_resolution_clock::now();
     auto results = SimulationRunner::runConcurrent(processes, schedulers);
@@ -92,8 +127,8 @@ void runBenchmark(int processCount, int jobCount, int trials) {
     vector<double> concurrentTimes;
 
     for(int trial = 0; trial < trials; trial++) {
-        int seqTime = measureSequential(processes, jobCount);
-        int conTime = measureConcurrent(processes, jobCount);
+        double seqTime = measureSequential(processes, jobCount);
+        double conTime = measureConcurrent(processes, jobCount);
 
         sequentialTimes.push_back(seqTime);
         concurrentTimes.push_back(conTime);
