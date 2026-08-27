@@ -1,14 +1,14 @@
-#ifndef ROUND_ROBIN_H
-#define ROUND_ROBIN_H
+#ifndef RR_H
+#define RR_H
 
 #include "Scheduler.h"
 
-class RoundRobin : public Scheduler {
+class RR : public Scheduler {
 private:
     int quantum;
 
 public:
-    RoundRobin(int quantum);
+    RR(int quantum);
 
     ScheduleResult simulate(
         const vector<Process>& processes

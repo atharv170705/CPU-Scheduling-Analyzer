@@ -2,12 +2,13 @@
 #include "Process.h"
 #include "Scheduler.h"
 #include "FCFS.h"
-#include "RoundRobin.h"
+#include "RR.h"
 #include "SRT.h"
 #include "SPN.h"
 #include "HRRN.h"
 #include "MLFQ.h"
 #include "SimulationRunner.h"
+#include "RecommendationEngine.h"
 
 using namespace std;
 
@@ -82,7 +83,7 @@ int main() {
     vector<unique_ptr<Scheduler>> schedulers;
 
     schedulers.push_back(make_unique<FCFS>());
-    schedulers.push_back(make_unique<RoundRobin>(2));
+    schedulers.push_back(make_unique<RR>(2));
     schedulers.push_back(make_unique<SRT>());
     schedulers.push_back(make_unique<SPN>());
     schedulers.push_back(make_unique<HRRN>());
@@ -91,6 +92,8 @@ int main() {
     vector<ScheduleResult> sequentialResult = SimulationRunner::runSequential(processes, schedulers);
 
     // vector<ScheduleResult> concurrentResults = SimulationRunner::runConcurrent(processes, schedulers);
+
+    RecommendationEngine::rankAlgorithms(sequentialResult);
 
     for(const auto& result : sequentialResult) {
 
@@ -103,6 +106,26 @@ int main() {
         printResult(result);
     }
 
+    cout << "\n====================\n";
+    cout << "Recommendation Ranking\n";
+    cout << "====================\n\n";
+
+    for(int i = 0; i < (int)sequentialResult.size(); i++) {
+
+        cout << i + 1 << ". "
+            << sequentialResult[i].algorithmName
+            << " | Score: "
+            << fixed << setprecision(3)
+            << sequentialResult[i].score
+            << '\n';
+    }
+
+    if(!sequentialResult.empty()) {
+
+        cout << "\nRecommended Algorithm: "
+            << sequentialResult[0].algorithmName
+            << '\n';
+    }
     // cout << "\n\n===== CONCURRENT RESULTS =====\n";
 
     // for(const auto& result : concurrentResults) {

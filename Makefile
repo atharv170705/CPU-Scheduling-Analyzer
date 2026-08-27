@@ -6,14 +6,15 @@ TARGET = scheduler
 SOURCES = main.cpp \
           src/Process.cpp \
           src/FCFS.cpp \
-          src/RoundRobin.cpp \
+          src/RR.cpp \
           src/SRT.cpp \
           src/SPN.cpp \
           src/HRRN.cpp \
           src/MLFQ.cpp \
           src/Timeline.cpp \
           src/MetricsEngine.cpp \
-          src/SimulationRunner.cpp
+          src/SimulationRunner.cpp \
+          src/RecommendationEngine.cpp
 
 $(TARGET): $(SOURCES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET)

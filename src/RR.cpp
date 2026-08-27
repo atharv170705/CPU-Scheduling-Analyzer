@@ -1,13 +1,13 @@
 #include <bits/stdc++.h>
-#include "RoundRobin.h"
+#include "RR.h"
 #include "Timeline.h"
 #include "MetricsEngine.h"
 
 using namespace std;
 
-RoundRobin::RoundRobin(int quantum) : quantum(quantum) {}
+RR::RR(int quantum) : quantum(quantum) {}
 
-ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
+ScheduleResult RR::simulate(const vector<Process>& processes) {
     ScheduleResult result;
     
     if (processes.empty()) {
@@ -95,6 +95,6 @@ ScheduleResult RoundRobin::simulate(const vector<Process>& processes) {
     return result;
 }    
 
-string RoundRobin::getName() const {
-    return "Round Robin";
+string RR::getName() const {
+    return "RR";
 }

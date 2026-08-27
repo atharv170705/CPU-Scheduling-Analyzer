@@ -19,7 +19,7 @@ struct ProcessMetrics {
 };
 
 struct ScheduleResult {
-    string algorithmName;
+    string algorithmName = "";
 
     vector<ExecutionBlock> timeline;
     vector<ProcessMetrics> metrics;
@@ -30,6 +30,8 @@ struct ScheduleResult {
 
     double cpuUtilization = 0.0;
     double throughput = 0.0;
+
+    double score = 0.0;
 };
 
 #endif
