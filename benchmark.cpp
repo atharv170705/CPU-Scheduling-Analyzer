@@ -43,7 +43,7 @@ vector<unique_ptr<Scheduler>> createSchedulers(int jobCount) {
         }
         else if(i % 3 == 1) {
             int quantum = 2 + (i % 5);
-            schedulers.push_back(make_unique<RoundRobin>(2));
+            schedulers.push_back(make_unique<RoundRobin>(quantum));
         }
         else {
             schedulers.push_back(make_unique<SRT>());

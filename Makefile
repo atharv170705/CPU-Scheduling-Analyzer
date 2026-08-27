@@ -8,6 +8,8 @@ SOURCES = main.cpp \
           src/FCFS.cpp \
           src/RoundRobin.cpp \
           src/SRT.cpp \
+          src/SPN.cpp \
+          src/HRRN.cpp \
           src/Timeline.cpp \
           src/MetricsEngine.cpp \
           src/SimulationRunner.cpp

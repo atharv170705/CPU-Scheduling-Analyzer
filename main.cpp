@@ -4,6 +4,8 @@
 #include "FCFS.h"
 #include "RoundRobin.h"
 #include "SRT.h"
+#include "SPN.h"
+#include "HRRN.h"
 #include "SimulationRunner.h"
 
 using namespace std;
@@ -69,9 +71,9 @@ void printResult(const ScheduleResult& result) {
 int main() {
 
     vector<Process> processes = {
-        Process(1, 0, 5),
-        Process(2, 10, 3),
-        Process(3, 12, 2)
+        Process(1, 0, 8),
+        Process(2, 1, 4),
+        Process(3, 2, 3)
     };
 
     // we use unique_ptr because: No manual delete
@@ -81,6 +83,8 @@ int main() {
     schedulers.push_back(make_unique<FCFS>());
     schedulers.push_back(make_unique<RoundRobin>(2));
     schedulers.push_back(make_unique<SRT>());
+    schedulers.push_back(make_unique<SPN>());
+    schedulers.push_back(make_unique<HRRN>());
 
     vector<ScheduleResult> sequentialResult = SimulationRunner::runSequential(processes, schedulers);
 
