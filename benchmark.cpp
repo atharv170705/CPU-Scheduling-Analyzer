@@ -67,28 +67,8 @@ vector<unique_ptr<Scheduler>> createSchedulers(int jobCount) {
     return schedulers;
 }
 
-vector<unique_ptr<Scheduler>> createSchedulers1(int jobCount) {
-    vector<unique_ptr<Scheduler>> schedulers;
-
-    for(int i = 0; i < jobCount; i++) {
-        if(i % 3 == 0) {
-            schedulers.push_back(make_unique<FCFS>());
-        }
-        else if(i % 3 == 1) {
-            int quantum = 2 + (i % 5);
-            schedulers.push_back(make_unique<RR>(quantum));
-        }
-        else {
-            schedulers.push_back(make_unique<SRT>());
-        }
-    }
-
-    return schedulers;
-}
-
 double measureSequential(const vector<Process>& processes, int jobCount) {
-    // auto schedulers = createSchedulers(jobCount);
-    auto schedulers = createSchedulers1(jobCount);
+    auto schedulers = createSchedulers(jobCount);
 
     auto start = high_resolution_clock::now();
     auto results = SimulationRunner::runSequential(processes, schedulers);
@@ -98,8 +78,7 @@ double measureSequential(const vector<Process>& processes, int jobCount) {
 }
 
 double measureConcurrent(const vector<Process>& processes, int jobCount) {
-    // auto schedulers = createSchedulers(jobCount);
-    auto schedulers = createSchedulers1(jobCount);
+    auto schedulers = createSchedulers(jobCount);
 
     auto start = high_resolution_clock::now();
     auto results = SimulationRunner::runConcurrent(processes, schedulers);
@@ -175,7 +154,7 @@ int main() {
          << thread::hardware_concurrency()
          << "\n\n";
 
-    const int JOB_COUNT = 12;
+    const int JOB_COUNT = 24;
     const int TRIALS = 5;
 
     vector<int> processCounts = {

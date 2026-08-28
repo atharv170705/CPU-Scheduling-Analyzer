@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <string>
-
 #include "Process.h"
 #include "ScheduleResult.h"
+
+using namespace std;
 
 class Scheduler {
 public:

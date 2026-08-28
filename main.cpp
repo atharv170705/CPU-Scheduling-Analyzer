@@ -70,30 +70,35 @@ void printResult(const ScheduleResult& result) {
         << " processes/unit time\n";
 }
 
-int main() {
+void printRanking(vector<ScheduleResult> &results) {
+    RecommendationEngine::rankAlgorithms(results);
+    
+    cout << "\n====================\n";
+    cout << "Recommendation Ranking\n";
+    cout << "====================\n\n";
 
-    vector<Process> processes = {
-        Process(1, 0, 8),
-        Process(2, 1, 4),
-        Process(3, 2, 3)
-    };
+    for(int i = 0; i < (int)results.size(); i++) {
 
-    // we use unique_ptr because: No manual delete
-    // if we do Scheduler* scheduler = new FCFS(); then we'll have to manually delete
-    vector<unique_ptr<Scheduler>> schedulers;
+        cout << i + 1 << ". "
+            << results[i].algorithmName
+            << " | Score: "
+            << fixed << setprecision(3)
+            << results[i].score
+            << '\n';
+    }
 
-    schedulers.push_back(make_unique<FCFS>());
-    schedulers.push_back(make_unique<RR>(2));
-    schedulers.push_back(make_unique<SRT>());
-    schedulers.push_back(make_unique<SPN>());
-    schedulers.push_back(make_unique<HRRN>());
-    schedulers.push_back(make_unique<MLFQ>());
+    if(!results.empty()) {
 
+        cout << "\nRecommended Algorithm: "
+            << results[0].algorithmName
+            << '\n';
+    }
+}
+
+void printSequential(vector<Process>& processes, vector<unique_ptr<Scheduler>>& schedulers) {
     vector<ScheduleResult> sequentialResult = SimulationRunner::runSequential(processes, schedulers);
 
-    // vector<ScheduleResult> concurrentResults = SimulationRunner::runConcurrent(processes, schedulers);
-
-    RecommendationEngine::rankAlgorithms(sequentialResult);
+    cout << "\n\n===== SEQUENTIAL RESULTS =====\n";
 
     for(const auto& result : sequentialResult) {
 
@@ -106,38 +111,90 @@ int main() {
         printResult(result);
     }
 
-    cout << "\n====================\n";
-    cout << "Recommendation Ranking\n";
-    cout << "====================\n\n";
+    printRanking(sequentialResult);
+}
 
-    for(int i = 0; i < (int)sequentialResult.size(); i++) {
+void printConcurrent(vector<Process>& processes, vector<unique_ptr<Scheduler>>& schedulers) {
+    vector<ScheduleResult> concurrentResults = SimulationRunner::runConcurrent(processes, schedulers);
 
-        cout << i + 1 << ". "
-            << sequentialResult[i].algorithmName
-            << " | Score: "
-            << fixed << setprecision(3)
-            << sequentialResult[i].score
+    cout << "\n\n===== CONCURRENT RESULTS =====\n";
+
+    for(const auto& result : concurrentResults) {
+
+        cout << "\n====================\n";
+        cout << "Algorithm: "
+            << result.algorithmName
             << '\n';
+        cout << "====================\n";
+
+        printResult(result);
     }
 
-    if(!sequentialResult.empty()) {
+    printRanking(concurrentResults);
+}
 
-        cout << "\nRecommended Algorithm: "
-            << sequentialResult[0].algorithmName
-            << '\n';
+vector<Process> generateWorkload( int processCount, int maxBurstTime, int maxArrivalTime) {
+    vector<Process> processes;
+    processes.reserve(processCount);
+
+    mt19937 generator(42);
+
+    uniform_int_distribution<int> burstDistribution(1, maxBurstTime);
+    uniform_int_distribution<int> arrivalDistribution(0, maxArrivalTime);
+
+    for(int i = 0; i < processCount; i++) {
+        int id = i + 1;
+        int arrivalTime = arrivalDistribution(generator);
+        int burstTime = burstDistribution(generator);
+
+        processes.emplace_back(id, arrivalTime, burstTime);
     }
-    // cout << "\n\n===== CONCURRENT RESULTS =====\n";
 
-    // for(const auto& result : concurrentResults) {
+    return processes;
+}
 
-    //     cout << "\n====================\n";
-    //     cout << "Algorithm: "
-    //         << result.algorithmName
-    //         << '\n';
-    //     cout << "====================\n";
+vector<Process> customProcesses() {
+    vector<Process> processes = {
+        Process(1, 0, 5),
+        Process(2, 1, 3),
+        Process(3, 2, 4),
+        Process(4, 3, 2),
+        Process(5, 15, 6),
+        Process(6, 16, 3),
+        Process(7, 18, 5),
+        Process(8, 25, 2)
+    };
 
-    //     printResult(result);
-    // }
+    return processes;
+}
+
+vector<unique_ptr<Scheduler>> createSchedulers() {
+
+     // we use unique_ptr because: No manual delete
+    // if we do Scheduler* scheduler = new FCFS(); then we'll have to manually delete
+    vector<unique_ptr<Scheduler>> schedulers;
+
+    schedulers.push_back(make_unique<FCFS>());
+    schedulers.push_back(make_unique<RR>(2));
+    schedulers.push_back(make_unique<SRT>());
+    schedulers.push_back(make_unique<SPN>());
+    schedulers.push_back(make_unique<HRRN>());
+    schedulers.push_back(make_unique<MLFQ>());
+
+    return schedulers;
+}
+
+int main() {
+
+    const int PROCESS_COUNT = 10;
+    const int MAX_BURST_TIME = 200;
+    const int MAX_ARRIVAL_TIME = 500;
+
+    // vector<Process> processes = generateWorkload(PROCESS_COUNT, MAX_BURST_TIME, MAX_ARRIVAL_TIME);
+    vector<Process> processes = customProcesses();
+    vector<unique_ptr<Scheduler>> schedulers = createSchedulers();
+
+    printConcurrent(processes, schedulers);
 
     return 0;
 }

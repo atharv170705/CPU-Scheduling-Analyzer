@@ -1,7 +1,11 @@
 #ifndef SPN_H
 #define SPN_H
 
+#include <vector>
+#include <string>
 #include "Scheduler.h"
+
+using namespace std;
 
 class SPN : public Scheduler {
 public:

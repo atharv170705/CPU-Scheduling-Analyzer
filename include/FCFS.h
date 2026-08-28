@@ -1,7 +1,11 @@
 #ifndef FCFS_H
 #define FCFS_H
 
+#include <vector>
+#include <string>
 #include "Scheduler.h"
+
+using namespace std;
 
 class FCFS : public Scheduler {
 public:
